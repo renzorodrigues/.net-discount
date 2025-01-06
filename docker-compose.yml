@@ -1,0 +1,25 @@
+version: "3.8"
+
+services:
+  redis:
+    image: redis:alpine
+    container_name: redis
+    command: ["redis-server", "--requirepass", "MyPassword"]
+    ports:
+      - "6379:6379"
+    environment:
+      - REDIS_PASSWORD=MyPassword
+
+  grpc-server:
+    build:
+      context: .
+    container_name: grpc-server
+    depends_on:
+      - redis
+    environment:
+      - ASPNETCORE_URLS=http://+:5116
+      - REDIS_HOST=redis
+      - REDIS_PASSWORD=MyPassword
+    ports:
+      - "5116:5116"
+
